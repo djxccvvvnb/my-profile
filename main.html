@@ -1,0 +1,1258 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>董健贤 | Portfolio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Noto+Sans+SC:wght@400;700;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --hue: 220;
+      --accent: hsl(var(--hue), 100%, 65%);
+      --glow: hsl(var(--hue), 100%, 50%);
+      --bg-dark: #0d0d14;
+      --bg-card: rgba(255,255,255,0.03);
+      --text: #e8e8f0;
+      --text-dim: #8888aa;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: linear-gradient(-45deg, #ff0000, #ff8800, #ffff00, #00ff00, #00ffff, #0088ff, #aa00ff, #ff0000);
+      background-size: 800% 800%;
+      animation: rainbowShift 6s ease infinite;
+      color: var(--text); font-family: 'Noto Sans SC', system-ui, sans-serif; min-height: 100vh; overflow-x: hidden;
+    }
+    @keyframes rainbowShift {
+      0%   { background-position: 0% 50%; }
+      25%  { background-position: 50% 100%; }
+      50%  { background-position: 100% 50%; }
+      75%  { background-position: 50% 0%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    /* liquid glass */
+    /* liquid glass - 增强反射版 */
+    .liquid-glass {
+      position: relative;
+      background: linear-gradient(135deg, rgba(255,255,255,0.07) 0%, rgba(255,255,255,0.02) 100%);
+      backdrop-filter: blur(28px) saturate(1.9) contrast(1.15);
+      -webkit-backdrop-filter: blur(28px) saturate(1.9) contrast(1.15);
+      border-radius: 30px;
+      border: 1px solid rgba(255,255,255,0.28);
+      box-shadow:
+        inset 0 2px 0 rgba(255,255,255,0.16),
+        inset 0 -2px 0 rgba(255,255,255,0.06),
+        0 12px 44px rgba(0,0,0,0.28),
+        0 4px 14px rgba(0,0,0,0.18);
+      overflow: hidden;
+      transition: transform 0.35s cubic-bezier(.22,.61,.36,1), box-shadow 0.35s ease;
+    }
+    .liquid-glass:hover {
+      transform: translateY(-5px);
+      box-shadow:
+        inset 0 2px 0 rgba(255,255,255,0.22),
+        inset 0 -2px 0 rgba(255,255,255,0.08),
+        0 20px 60px rgba(0,0,0,0.35),
+        0 6px 18px rgba(0,0,0,0.22);
+    }
+    /* 顶部高光条 */
+    .liquid-glass::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0; height: 48%;
+      background: linear-gradient(180deg, rgba(255,255,255,0.14) 0%, transparent 100%);
+      border-radius: 30px 30px 0 0;
+      pointer-events: none;
+      z-index: 1;
+    }
+    /* 折射动画光斑 */
+    .liquid-glass::after {
+      content: '';
+      position: absolute; top: -60%; left: -60%;
+      width: 220%; height: 220%;
+      background: radial-gradient(circle at 35% 35%, rgba(255,255,255,0.18) 0%, transparent 55%),
+                  radial-gradient(circle at 65% 65%, rgba(255,255,255,0.10) 0%, transparent 45%);
+      animation: glassShine 9s ease-in-out infinite;
+      pointer-events: none;
+      z-index: 1;
+    }
+    @keyframes glassShine {
+      0%, 100% { transform: translate(0, 0) rotate(0deg); }
+      50% { transform: translate(8%, 8%) rotate(6deg); }
+    }
+
+    /* animated bg */
+    .bg-wrap {
+      position: fixed; inset: 0; z-index: 0; pointer-events: none;
+      background:
+        radial-gradient(ellipse 80% 60% at 20% 80%, hsla(var(--hue),100%,50%,0.12) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 50% at 80% 20%, hsla(calc(var(--hue)+60),100%,50%,0.10) 0%, transparent 60%),
+        radial-gradient(ellipse 50% 40% at 50% 50%, hsla(calc(var(--hue)+120),100%,50%,0.07) 0%, transparent 60%);
+      animation: bgShift 8s ease-in-out infinite alternate;
+    }
+    @keyframes bgShift { 0%{filter:hue-rotate(0deg);transform:scale(1);} 100%{filter:hue-rotate(40deg);transform:scale(1.05);} }
+
+    .particles { position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; }
+    .particle {
+      position: absolute; width: 4px; height: 4px; border-radius: 50%;
+      background: var(--accent); opacity: 0.3;
+      animation: float linear infinite;
+    }
+    @keyframes float {
+      0%{transform:translateY(100vh) scale(0);opacity:0;}
+      10%{opacity:0.4;}
+      90%{opacity:0.4;}
+      100%{transform:translateY(-10vh) scale(1);opacity:0;}
+    }
+
+    /* ── 全屏黑屏效果：鼠标悬停技能卡时触发 ── */
+    #blackOverlay {
+      position: fixed; inset: 0; z-index: 9999;
+      background: #000;
+      opacity: 0;
+      transition: opacity 1.5s ease;
+      pointer-events: none;
+    }
+    #blackOverlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .container { position: relative; z-index: 10000; max-width: 1080px; margin: 0 auto; padding: 60px 24px; }
+
+    /* 默认状态：所有内容可见 */
+    body:not(.dim-mode) nav,
+    body:not(.dim-mode) header.hero,
+    body:not(.dim-mode) .section:not(#skills),
+    body:not(.dim-mode) footer {
+      opacity: 1;
+      transition: opacity 1.5s ease;
+    }
+
+    /* dim模式：所有内容隐藏 */
+    body.dim-mode nav,
+    body.dim-mode header.hero,
+    body.dim-mode .section:not(#skills),
+    body.dim-mode footer,
+    body.dim-mode .bg-wrap,
+    body.dim-mode .particles,
+    body.dim-mode .about-grid,
+    body.dim-mode .radar-wrap {
+      opacity: 0 !important;
+      pointer-events: none !important;
+      visibility: hidden !important;
+    }
+
+    /* skills section的标题也隐藏 */
+    body.dim-mode #skills .section-title {
+      opacity: 0 !important;
+      visibility: hidden !important;
+    }
+
+    /* 技能卡片网格 - 全部隐藏 */
+    body.dim-mode .skills-grid .skill-card {
+      opacity: 0 !important;
+      transform: scale(0.8);
+      pointer-events: none !important;
+      visibility: hidden !important;
+      transition: all 1.5s ease;
+    }
+    /* 当前悬停的卡片 - 保持可见并放大发光 */
+    body.dim-mode .skills-grid .skill-card.highlighted {
+      opacity: 1 !important;
+      transform: scale(1.15);
+      pointer-events: auto !important;
+      visibility: visible !important;
+      border-color: var(--card-hue);
+      box-shadow: 0 0 40px var(--card-hue), 0 0 80px var(--card-hue), inset 0 0 20px rgba(255,255,255,0.1);
+      z-index: 10001 !important;
+      filter: brightness(1.5);
+    }
+
+    /* NAV */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      padding: 12px 32px; display: flex; align-items: center; justify-content: space-between;
+      background: rgba(10,10,15,0.7); backdrop-filter: blur(16px);
+      border-bottom: 1px solid rgba(255,255,255,0.06); border-radius: 0 0 20px 20px;
+    }
+    nav .logo { font-weight: 900; font-size: 1.1rem; letter-spacing: 2px; }
+    nav .logo span { color: var(--accent); }
+    nav ul { list-style: none; display: flex; gap: 24px; }
+    nav ul li a { color: var(--text-dim); text-decoration: none; font-size: 0.85rem; letter-spacing: 1px; transition: color 0.2s; }
+    nav ul li a:hover { color: var(--accent); }
+
+    /* HERO */
+    .hero { text-align: center; padding-top: 100px; margin-bottom: 64px; }
+    .avatar-ring {
+      width: 140px; height: 140px; margin: 0 auto 28px;
+      border-radius: 50%; padding: 4px;
+      background: conic-gradient(from 0deg, var(--accent), hsl(calc(var(--hue)+60),100%,60%), hsl(calc(var(--hue)+120),100%,60%), var(--accent));
+      animation: ringSpin 4s linear infinite;
+    }
+    @keyframes ringSpin { to { filter: hue-rotate(360deg); } }
+    .avatar-ring img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; display: block; background: linear-gradient(135deg, #0d0d14 0%, #1a1a2e 100%); }
+    .hero h1 {
+      font-size: 3.2rem; font-weight: 900; letter-spacing: 3px;
+      background: linear-gradient(135deg, #fff 0%, var(--accent) 50%, hsl(calc(var(--hue)+80),100%,70%) 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+      animation: titleShift 5s ease-in-out infinite alternate;
+    }
+    @keyframes titleShift { 0%{filter:hue-rotate(-20deg);} 100%{filter:hue-rotate(20deg);} }
+    .hero .badges { margin-top: 18px; display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; }
+    .badge {
+      font-size: 0.72rem; font-weight: 700; letter-spacing: 2px; text-transform: uppercase;
+      padding: 6px 16px; border-radius: 999px; border: 1px solid rgba(255,255,255,0.15);
+      background: rgba(255,255,255,0.04); color: var(--text-dim);
+    }
+    .badge .dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; margin-right: 6px; vertical-align: middle; }
+    .badge-age   { border-color:rgba(166,227,161,0.4); color:#a6e3a1; } .badge-age .dot   { background:#a6e3a1; }
+    .badge-cyber  { border-color:rgba(250,179,135,0.4); color:#fab387; } .badge-cyber .dot { background:#fab387; }
+    .badge-vscode { border-color:rgba(137,180,250,0.4); color:#89b4fa; } .badge-vscode .dot { background:#89b4fa; }
+    .tagline { margin-top: 14px; font-size: 1rem; color: var(--text-dim); letter-spacing: 4px; text-transform: uppercase; }
+
+    /* SECTION */
+    .section { margin-bottom: 56px; }
+    .section-title {
+      font-size: 0.75rem; letter-spacing: 4px; text-transform: uppercase;
+      color: var(--accent); margin-bottom: 20px;
+      display: flex; align-items: center; gap: 12px;
+    }
+    .section-title::after { content: ''; flex: 1; height: 1px; background: linear-gradient(90deg, var(--accent), transparent); }
+
+    /* ABOUT */
+    .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    .about-card { padding: 32px; line-height: 1.9; color: var(--text-dim); font-size: 1rem; }
+    .about-card strong { color: var(--text); }
+    .radar-wrap { display: flex; align-items: center; justify-content: center; padding: 24px; }
+    .radar-wrap img { max-width: 100%; border-radius: 16px; }
+
+    /* SKILLS GRID */
+    .skills-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 18px; }
+    .skill-card {
+      background: var(--bg-card);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 20px;
+      padding: 28px 16px 22px;
+      text-align: center;
+      transition: transform 0.35s cubic-bezier(.22,.61,.36,1), box-shadow 0.35s, border-color 0.35s, opacity 1.5s ease;
+      cursor: pointer;
+      position: relative; overflow: hidden;
+      text-decoration: none; color: inherit;
+    }
+    .skill-card::before {
+      content: ''; position: absolute; inset: 0;
+      background: radial-gradient(circle at 50% 0%, var(--card-hue, var(--accent)), transparent 70%);
+      opacity: 0; transition: opacity 0.4s;
+    }
+    .skill-card:hover::before { opacity: 0.18; }
+    .skill-card:hover {
+      transform: translateY(-8px) scale(1.02);
+      border-color: var(--card-hue, var(--accent));
+      box-shadow: 0 16px 48px -12px var(--card-hue, var(--accent));
+    }
+    .skill-logo {
+      width: 56px; height: 56px; margin: 0 auto 14px;
+      border-radius: 12px; object-fit: contain;
+      filter: drop-shadow(0 0 10px var(--card-hue, var(--accent)));
+      transition: transform 0.3s;
+    }
+    .skill-card:hover .skill-logo { transform: scale(1.1) rotate(-3deg); }
+    .skill-name { font-weight: 700; font-size: 0.95rem; letter-spacing: 1px; margin-bottom: 4px; }
+    .skill-info { font-size: 0.72rem; color: var(--text-dim); line-height: 1.6; margin-top: 8px; }
+    .skill-info div { margin: 2px 0; }
+    .skill-bar-wrap { margin-top: 14px; height: 3px; background: rgba(255,255,255,0.08); border-radius: 2px; overflow: hidden; }
+    .skill-bar-fill {
+      height: 100%; border-radius: 2px;
+      background: var(--card-hue, var(--accent));
+      animation: barGrow 1.2s ease-out forwards;
+      transform-origin: left;
+    }
+    @keyframes barGrow { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+    .skill-html  { --card-hue: hsl(14,100%,60%); }
+    .skill-css   { --card-hue: hsl(200,100%,60%); }
+    .skill-js    { --card-hue: hsl(48,100%,58%); }
+    .skill-py    { --card-hue: hsl(56,100%,55%); }
+    .skill-c     { --card-hue: hsl(210,100%,60%); }
+    .skill-go    { --card-hue: hsl(185,100%,50%); }
+    .skill-php   { --card-hue: hsl(260,80%,60%); }
+    .skill-asm   { --card-hue: hsl(0,80%,60%); }
+    .skill-sql   { --card-hue: hsl(30,100%,60%); }
+
+    /* V5 Entry Animation */
+    @keyframes fadeInUp { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: translateY(0); } }
+    .v5-fade-in { opacity: 0; animation: fadeInUp 0.7s ease forwards; }
+    .project-card { transition: transform 0.3s cubic-bezier(.22,.61,.36,1), box-shadow 0.3s; }
+    .project-card:hover { transform: translateY(-6px); box-shadow: 0 16px 48px -12px rgba(168,85,247,0.4); border-color: rgba(168,85,247,0.5); }
+    .battles-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:16px; }
+    .battle-card { transition: transform 0.3s, box-shadow 0.3s; }
+    .battle-card:hover { transform: translateY(-4px); box-shadow: 0 12px 36px -8px rgba(0,0,0,0.3); }
+    .tool-reco-card { transition: transform 0.3s, box-shadow 0.3s; }
+    .tool-reco-card:hover { transform: translateY(-4px); box-shadow: 0 12px 40px -8px rgba(0,120,255,0.3); }
+    .reco-icon { width:52px;height:52px;border-radius:14px;background:linear-gradient(135deg,#0078d4,#005a9e);display:flex;align-items:center;justify-content:center;font-size:1.6rem;color:#fff;box-shadow:0 4px 16px rgba(0,120,255,0.4);flex-shrink:0; }
+    .download-btn { display:inline-flex;align-items:center;gap:8px;margin-top:14px;padding:12px 24px;border-radius:14px;background:linear-gradient(135deg,#0078d4,#005a9e);color:#fff;text-decoration:none;font-weight:700;font-size:0.9rem;transition:transform .2s,box-shadow .2s;box-shadow:0 4px 16px rgba(0,120,255,0.3); }
+    .download-btn:hover { transform:scale(1.05); box-shadow:0 6px 24px rgba(0,120,255,0.5); }
+    .win-rate { font-size:1.6rem;font-weight:900;background:linear-gradient(135deg,#a855f7,#ec4899);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text; }
+
+    /* skills grid when dimmed */
+    body.dim-mode .skills-grid .skill-card:not(.highlighted) {
+      opacity: 0.15;
+      transform: scale(0.95);
+      pointer-events: none;
+    }
+    body.dim-mode .skills-grid .skill-card.highlighted {
+      opacity: 1 !important;
+      transform: scale(1.08);
+      border-color: var(--card-hue);
+      box-shadow: 0 0 30px var(--card-hue), 0 0 60px var(--card-hue);
+      z-index: 20;
+    }
+
+    /* dimmed state for other elements */
+    body.dim-mode nav,
+    body.dim-mode header.hero,
+    body.dim-mode .section:not(#skills),
+    body.dim-mode footer {
+      opacity: 0.1;
+      transition: opacity 1.5s ease;
+      pointer-events: none;
+    }
+    body.dim-mode .bg-wrap,
+    body.dim-mode .particles { opacity: 0; }
+    body.dim-mode .liquid-glass::before { animation-play-state: paused; }
+
+    /* ── V5 Mobile Touch Mode ── */
+    @media (hover: none) and (pointer: coarse) {
+      .skill-card.touch-active {
+        border-color: var(--card-hue, var(--accent)) !important;
+        transform: scale(1.08) translateY(-4px) !important;
+        box-shadow: 0 0 30px var(--card-hue, var(--accent)), 0 0 60px rgba(0,0,0,0.3) !important;
+      }
+      body.mobile-dim nav,
+      body.mobile-dim header.hero,
+      body.mobile-dim .section:not(#skills),
+      body.mobile-dim footer,
+      body.mobile-dim .bg-wrap,
+      body.mobile-dim .particles,
+      body.mobile-dim .about-grid,
+      body.mobile-dim .radar-wrap {
+        opacity: 0 !important; pointer-events: none !important; visibility: hidden !important;
+      }
+      body.mobile-dim #skills .section-title { opacity: 0 !important; visibility: hidden !important; }
+      body.mobile-dim .skills-grid .skill-card {
+        opacity: 0 !important; transform: scale(0.7);
+        pointer-events: none !important; transition: all 1.5s ease !important;
+      }
+      body.mobile-dim .skills-grid .skill-card.touch-active {
+        opacity: 1 !important; transform: scale(1.2) !important;
+        pointer-events: auto !important; z-index: 10001 !important;
+        filter: brightness(1.5) !important; transition: all 1.5s cubic-bezier(.22,.61,.36,1) !important;
+      }
+    }
+
+    /* TOOLS */
+    .tools-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
+    .tool-card { padding: 24px; }
+    .tool-card h3 { font-size: 1rem; font-weight: 700; margin-bottom: 6px; display: flex; align-items: center; gap: 8px; }
+    .tool-card p.desc { font-size: 0.82rem; color: var(--text-dim); margin-bottom: 16px; }
+    .tool-row { display: flex; gap: 10px; margin-bottom: 12px; }
+    .tool-input {
+      flex: 1; padding: 10px 14px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.12);
+      background: rgba(0,0,0,0.3); color: var(--text); font-family: 'Fira Code', monospace; font-size: 0.9rem;
+      outline: none; transition: border-color 0.2s;
+    }
+    .tool-input:focus { border-color: var(--accent); }
+    .tool-btn {
+      padding: 10px 20px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.15);
+      background: rgba(255,255,255,0.06); color: var(--text); font-size: 0.85rem;
+      cursor: pointer; transition: all 0.2s; white-space: nowrap;
+    }
+    .tool-btn:hover { background: var(--accent); color: #fff; border-color: var(--accent); }
+    .tool-output {
+      background: rgba(0,0,0,0.35); border-radius: 12px; padding: 14px 16px;
+      font-family: 'Fira Code', monospace; font-size: 0.85rem; color: var(--accent);
+      word-break: break-all; line-height: 1.8; min-height: 48px; user-select: all;
+    }
+    .mini-result { display: flex; flex-direction: column; gap: 10px; }
+    .mini-result-row { display: flex; align-items: center; gap: 10px; }
+    .mini-result-row .label { font-size: 0.72rem; color: var(--text-dim); width: 36px; text-align: right; letter-spacing: 1px; }
+    .mini-result-row .val { flex: 1; background: rgba(0,0,0,0.3); border-radius: 8px; padding: 8px 12px; font-family: 'Fira Code', monospace; font-size: 0.88rem; color: var(--accent); word-break: break-all; }
+    .range-sliders { display: flex; gap: 12px; align-items: center; margin-bottom: 14px; }
+    .range-sliders label { font-size: 0.78rem; color: var(--text-dim); }
+    .range-sliders input[type=range] { flex: 1; accent-color: var(--accent); }
+    .range-sliders .range-val { font-family: 'Fira Code', monospace; font-size: 0.85rem; color: var(--accent); min-width: 48px; text-align: center; }
+
+    footer { text-align: center; padding: 48px 0 24px; color: var(--text-dim); font-size: 0.82rem; letter-spacing: 2px; }
+    footer a { color: var(--accent); text-decoration: none; }
+
+    @media (max-width: 700px) {
+      .about-grid, .tools-grid { grid-template-columns: 1fr; }
+      .hero h1 { font-size: 2.2rem; }
+      .skills-grid { grid-template-columns: repeat(3, 1fr); gap: 12px; }
+      .skill-logo { width: 40px; height: 40px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-wrap"></div>
+  <div class="particles" id="particles"></div>
+  <!-- 全屏黑色遮罩 -->
+  <div id="blackOverlay"></div>
+
+  <!-- NAV -->
+  <nav class="liquid-glass">
+    <div class="logo">DJX<span>.dev</span></div>
+    <ul>
+      <li><a href="#about">关于</a></li>
+      <li><a href="#skills">技术栈</a></li>
+      <li><a href="#tools">工具</a></li>
+      <li><a href="#contact">联系</a></li>
+    </ul>
+  </nav>
+  <!-- VERSION TAG -->
+  <div class="version-tag" onclick="toggleChangelog()" title="点击查看更新日志">
+    <span style="font-weight:900;font-size:0.95em;">v4.0.0</span>
+    <span style="display:block;font-size:0.7rem;opacity:0.75;margin-top:2px;">2026.11.20</span>
+    <span class="changelog-link">更新日志 &#9660;</span>
+  </div>
+  <!-- CHANGELOG MODAL -->
+  <div class="changelog-modal" id="changelogModal">
+    <div class="changelog-box liquid-glass">
+      <h2>changelog — v4.0.0</h2>
+      <div class="changelog-item"><strong>v4.0.0</strong> · 2026-11-20<br><span style="font-size:0.8em;color:#6b7280;">新增棋力战绩板块 · 项目展示入口 · VS Code下载推荐 · 入场动画 · 雷达图动画 · 移动端触控适配</span></div>
+      <div class="changelog-item"><strong>v3.5.0</strong> · 2026-11-19<br><span style="font-size:0.8em;color:#6b7280;">修复git混乱问题，整理提交记录</span></div>
+      <div class="changelog-item"><strong>v3.0.0</strong> · 2026-11-18<br><span style="font-size:0.8em;color:#6b7280;">新增工具推荐板块（进制转换/随机数/JSON等11项）</span></div>
+      <div class="changelog-item"><strong>v2.0.0</strong> · 2026-11-17<br><span style="font-size:0.8em;color:#6b7280;">完整重构：Liquid Glass特效 / 彩虹动态背景 / 全屏黑色叠加交互</span></div>
+      <button class="changelog-close" onclick="toggleChangelog()">关闭</button>
+    </div>
+  </div>
+
+  <div class="container">
+    <!-- HERO -->
+    <header class="hero">
+      <div class="avatar-ring">
+        <img src="photo.jpeg" alt="董健贤">
+      </div>
+      <h1>董健贤</h1>
+      <div class="badges">
+        <span class="badge badge-age"><span class="dot"></span>10岁精通多语言</span>
+        <span class="badge badge-cyber"><span class="dot"></span>网络安全爱好者</span>
+        <span class="badge badge-vscode"><span class="dot"></span>必用VSCode开发项目</span>
+        <span class="badge badge-vscode"><span class="dot"></span>不服来战</span>
+        <span class="badge badge-vscode"><span class="dot"></span>github开发过真实项目</span>
+        <a class="badge badge-vscode" href="https://github.com/djxccvvvnb/" target="_blank" style="text-decoration:none;color:inherit;"><span class="dot"></span>点击进入我的GITHUB仓库</a>
+      </div>
+      <p class="tagline">掌握9门编程语言 · 深入计算机原理 · 探索网络安全</p>
+    </header>
+
+    <!-- ABOUT -->
+    <section class="section" id="about">
+      <h2 class="section-title">关于我</h2>
+      <div class="about-grid">
+        <div class="about-card liquid-glass">
+          你好！我是<strong>董健贤</strong>,四年级9班,今年<strong>10岁</strong>。<br>
+          <span style="color:#ff2d55;font-weight:900;font-size:1.3em;letter-spacing:3px;text-shadow:0 0 20px rgba(255,45,85,0.6);">— CTF WEB 方向绝对统治者 —</span><br>
+          <span style="color:#00f0ff;font-weight:700;font-size:1.1em;letter-spacing:1px;">独立开发C语言端口扫描器 · 全网罕见</span><br>
+          <span style="color:#ffd700;font-weight:700;font-size:1.1em;letter-spacing:1px;">熟练使用渗透测试全栈工具链</span><br>
+          <span style="color:#fff;font-weight:600;font-size:0.95em;letter-spacing:0.5px;opacity:0.9;">Kali Linux | nmap | sqlmap | sstimap | hydra | BP抓包 | WS | nslookup</span><br>
+          <span style="color:#a855f7;font-weight:900;font-size:1.15em;letter-spacing:2px;text-shadow:0 0 16px rgba(168,85,247,0.6);">10岁掌握9门编程语言，含汇编语言(ASM)</span><br>
+          <span style="color:#22c55e;font-weight:800;font-size:1.1em;letter-spacing:1px;">底层逆向思维 | 二进制漏洞挖掘入门 | 手写汇编小程序</span><br>
+          <span style="color:#ef4444;font-weight:900;font-size:1.05em;letter-spacing:2px;">同龄人还在玩 Minecraft，我在用 nasm 写 bootloader 😂</span><br>
+          <span style="color:#6b7280;font-weight:600;font-size:0.9em;letter-spacing:0.5px;opacity:0.8;font-style:italic;">8岁开始学Python，那时的代码现在看简直不忍直视 —— 但两年后的今天，Python已是我随手即用的利器</span><br>
+          <span style="color:#f59e0b;font-weight:800;font-size:1em;letter-spacing:1px;text-shadow:0 0 12px rgba(245,158,11,0.5);">我的字典里没有「学不会」，只有「还没搞定」</span><br>
+          <span style="color:#0ea5e9;font-weight:800;font-size:1em;letter-spacing:1px;">从 Python 脚本到 C 底层渗透工具，跨度不是问题，是习惯</span><br>
+          <span style="color:#d946ef;font-weight:800;font-size:1em;letter-spacing:1px;">别人问我会几门语言，我其实只想说——门数不是重点，能解决什么才是重点 </span><br>
+          <span style="color:#f43f5e;font-weight:900;font-size:1.02em;letter-spacing:1.5px;">有人问我为什么这么努力，我说因为我想看看这个世界的底层代码长什么样 </span><br>
+          <span style="color:#7c3aed;font-weight:900;font-size:1em;letter-spacing:1px;">同龄人在讨论哪个英雄最强，我在研究 exploit chain —— 这不是早熟，是选择</span><br>
+          <span style="color:#db2777;font-weight:800;font-size:0.95em;letter-spacing:0.5px;opacity:0.9;">别问我是怎么学会的，问就是：别人刷视频的时候，我在拆包 </span><br>
+          <span style="color:#ff0040;font-weight:900;font-size:1.15em;letter-spacing:2px;text-shadow:0 0 20px rgba(255,0,64,0.7);">「都是同龄人，我原本没想降维打击！」</span><br>
+          <span style="color:#fb923c;font-weight:800;font-size:1em;letter-spacing:1px;">围棋与五子棋均统治全班，无人能敌</span><br>
+          <span style="color:#fbbf24;font-weight:900;font-size:1.05em;letter-spacing:1px;">10岁学会国际象棋，仅用一天便达到高手水平</span><br>
+          <span style="color:#a3e635;font-weight:800;font-size:1em;letter-spacing:1px;">棋盘之上，全班第一</span><br>
+          <span style="color:#f43f5e;font-weight:800;font-size:1em;letter-spacing:1px;">编程之外，我也从未输过 </span><br>
+          <span style="background:linear-gradient(90deg,rgba(255,0,64,0.15),rgba(255,0,64,0.05));border-left:3px solid #ff0040;padding:6px 14px;border-radius:0 8px 8px 0;display:inline-block;margin-top:4px;"><strong style="color:#ff0040;font-size:0.95em;letter-spacing:1px;">以上均为真实经历，绝非夸张</strong></span><br>
+          <span style="color:#00f0ff;font-weight:800;font-size:0.95em;letter-spacing:1px;">深入研究RCE远程代码执行漏洞原理，熟悉CVE漏洞分析流程</span><br>
+          <span style="color:#a855f7;font-weight:800;font-size:0.95em;letter-spacing:1px;">SSRF盲打、XXE注入、反序列化链构造——圈内人都懂的技术栈</span><br>
+          <span style="color:#ffd700;font-weight:800;font-size:0.95em;letter-spacing:1px;">渗透测试不是敲工具，是用思维撕开系统的每一道防线</span><br>
+          <span style="color:#22c55e;font-weight:800;font-size:0.95em;letter-spacing:1px;">成功入侵测试过班级积分系统，内网渗透只是基础操作</span><br>
+          <span style="color:#3b82f6;font-weight:800;font-size:0.95em;letter-spacing:1px;">计算机知识极高，班级所有希沃智能平板都是我维修的</span><br><br>
+          掌握 <strong>HTML / CSS / JavaScript / Python / C / Go / PHP / 汇编语言(ASM) / SQL</strong> 共 <strong>9 门编程语言,</strong><strong style="color:red;">手搓代码之神,你有我厉害?真实的9门编程语言,无任何造假</strong><br><br>
+          对<strong>网络安全</strong>抱有浓厚兴趣，熟悉渗透测试基础、网络协议分析以及系统底层原理。<br><br>
+          日常使用 <strong>Visual Studio Code</strong> 进行项目开发，热爱用代码解决实际问题。<br><br>
+          虽年幼，但已具备扎实的编程思维与持续学习的能力。<br><br>
+          <span style="color:#ff0040;font-weight:900;font-size:1.3em;letter-spacing:3px;text-shadow:0 0 20px rgba(255,0,64,0.8),0 0 40px rgba(255,0,64,0.5);">全部自学，无任何指导</span><br><br>
+          <span style="color:#8b5cf6;font-weight:900;font-size:1.05em;letter-spacing:1px;text-shadow:0 0 16px rgba(139,92,246,0.7);">这个文件并不容易——改到v4版本经历了无数次波折</span><br>
+          <span style="color:#c4b5fd;font-weight:700;font-size:0.95em;">曾三次陷入绝境，一度濒临失控，但最终凭借耐心逐一化解 💪</span>
+        </div>
+        <div class="radar-wrap liquid-glass">
+          <h2 class="badge-vscode">雷达图</h2>
+          <canvas id="radarCanvas" width="360" height="360"></canvas>
+        </div>
+      </div>
+    </section>
+
+    <!-- SKILLS -->
+    <section class="section" id="skills">
+      <h2 class="section-title">技术栈 — 点击任意语言查看实践代码</h2>
+      <div class="skills-grid">
+        <a href="html.html" class="skill-card skill-html liquid-glass" onmouseenter="activateSkill(this)" onmouseleave="deactivateSkill()">
+          <img class="skill-logo" src="html.jpg" alt="HTML">
+          <div class="skill-name">HTML</div>
+          <div class="skill-info">
+            <div style="color:#ffd700;font-weight:800;font-size:0.95em">Web基石 · 网页骨架搭建大师</div>
+            <div style="font-size:0.82em;color:#bbb;line-height:1.6">9岁写出第一个动态页面，从静态排版到交互设计，一切从零开始</div>
+            
+            <div>掌握度 100% | 难度 ★★★★</div>
+          </div>
+          <div class="skill-bar-wrap"><div class="skill-bar-fill" style="width:100%"></div></div>
+        </a>
+        <a href="css.html" class="skill-card skill-css liquid-glass" onmouseenter="activateSkill(this)" onmouseleave="deactivateSkill()">
+          <img class="skill-logo" src="css.jpg" alt="CSS">
+          <div class="skill-name">CSS</div>
+          <div class="skill-info">
+            <div style="color:#00f0ff;font-weight:800;font-size:0.95em">魔法排版 · Liquid Glass实战派</div>
+            <div style="font-size:0.82em;color:#bbb;line-height:1.6">从Flex布局到复杂动画，这个站的所有玻璃效果都是手搓的</div>
+            
+            <div>掌握度 96% | 难度 ★★★</div>
+          </div>
+          <div class="skill-bar-wrap"><div class="skill-bar-fill" style="width:96%"></div></div>
+        </a>
+        <a href="js.html" class="skill-card skill-js liquid-glass" onmouseenter="activateSkill(this)" onmouseleave="deactivateSkill()">
+          <img class="skill-logo" src="js.webp" alt="JavaScript">
+          <div class="skill-name">JavaScript</div>
+          <div class="skill-info">
+            <div style="color:#ff6b00;font-weight:800;font-size:0.95em">交互灵魂 · 前端逻辑掌控者</div>
+            <div style="font-size:0.82em;color:#bbb;line-height:1.6">Async/await、DOM操作、事件驱动，让静态页面活起来</div>
+            
+            <div>掌握度 94.5% | 难度 ★★★★</div>
+          </div>
+          <div class="skill-bar-wrap"><div class="skill-bar-fill" style="width:94%"></div></div>
+        </a>
+        <a href="py.html" class="skill-card skill-py liquid-glass" onmouseenter="activateSkill(this)" onmouseleave="deactivateSkill()">
+          <img class="skill-logo" src="py.webp" alt="Python">
+          <div class="skill-name">Python</div>
+          <div class="skill-info">
+            <div style="color:#22c55e;font-weight:800;font-size:0.95em">AI未来 · 两年自学逆袭之路</div>
+            <div style="font-size:0.82em;color:#bbb;line-height:1.6">8岁起步，那时的代码现在看简直不忍直视——但今天，Python已是我随手即用的利器</div>
+            
+            <div>掌握度 100% | 难度 ★★★</div>
+          </div>
+          <div class="skill-bar-wrap"><div class="skill-bar-fill" style="width:100%"></div></div>
+        </a>
+        <a href="c.html" class="skill-card skill-c liquid-glass" onmouseenter="activateSkill(this)" onmouseleave="deactivateSkill()">
+          <img class="skill-logo" src="C.webp" alt="C">
+          <div class="skill-name">C</div>
+          <div class="skill-info">
+            <div style="color:#ef4444;font-weight:800;font-size:0.95em">系统之魂 · 前无古人后无来者的C语言实战派</div>
+            <div style="font-size:0.82em;color:#bbb;line-height:1.6">多线程端口扫描器、哈希表、动态数组——理解计算机底层本质</div>
+            
+            <div>掌握度 98% | 难度 ★★★★★</div>
+          </div>
+          <div class="skill-bar-wrap"><div class="skill-bar-fill" style="width:98%"></div></div>
+        </a>
+        <a href="go.html" class="skill-card skill-go liquid-glass" onmouseenter="activateSkill(this)" onmouseleave="deactivateSkill()">
+          <img class="skill-logo" src="go.webp" alt="Go">
+          <div class="skill-name">Go</div>
+          <div class="skill-info">
+            <div style="color:#0ea5e9;font-weight:800;font-size:0.95em">并发之王 · 现代后端新选择</div>
+            <div style="font-size:0.82em;color:#bbb;line-height:1.6">Goroutine轻量并发、Channel通信机制，云原生时代必备技能</div>
+            
+            <div>掌握度 86% | 难度 ★★★</div>
+          </div>
+          <div class="skill-bar-wrap"><div class="skill-bar-fill" style="width:86%"></div></div>
+        </a>
+        <a href="php.html" class="skill-card skill-php liquid-glass" onmouseenter="activateSkill(this)" onmouseleave="deactivateSkill()">
+          <img class="skill-logo" src="php.webp" alt="PHP">
+          <div class="skill-name">PHP</div>
+          <div class="skill-info">
+            <div style="color:#a855f7;font-weight:800;font-size:0.95em">Web后端 · 全栈能力基石</div>
+            <div style="font-size:0.82em;color:#bbb;line-height:1.6">Laravel框架、MySQL优化、RESTful API——从后端支撑整个系统</div>
+            
+            <div>掌握度 95% | 难度 ★★★</div>
+          </div>
+          <div class="skill-bar-wrap"><div class="skill-bar-fill" style="width:95%"></div></div>
+        </a>
+        <a href="asm.html" class="skill-card skill-asm liquid-glass" onmouseenter="activateSkill(this)" onmouseleave="deactivateSkill()">
+          <img class="skill-logo" src="ASM.jpeg" alt="Assembly">
+          <div class="skill-name">ASM</div>
+          <div class="skill-info">
+            <div style="color:#f97316;font-weight:800;font-size:0.95em">底层真相 · 逆向工程必修课</div>
+            <div style="font-size:0.82em;color:#bbb;line-height:1.6">x86汇编、寄存器操作、手写bootloader——同龄人的技术天花板</div>
+            
+            <div>掌握度 50% | 难度 ★★★★★</div>
+          </div>
+          <div class="skill-bar-wrap"><div class="skill-bar-fill" style="width:50%"></div></div>
+        </a>
+        <a href="sql.html" class="skill-card skill-sql liquid-glass" onmouseenter="activateSkill(this)" onmouseleave="deactivateSkill()">
+          <img class="skill-logo" src="sql.webp" alt="SQL">
+          <div class="skill-name">SQL</div>
+          <div class="skill-info">
+            <div style="color:#ec4899;font-weight:800;font-size:0.95em">数据之海 · 攻防一体的武器</div>
+            <div style="font-size:0.82em;color:#bbb;line-height:1.6">复杂嵌套查询、存储过程、性能调优——渗透测试中最锋利的矛</div>
+            
+            <div>掌握度 79% | 难度 ★★★</div>
+          </div>
+          <div class="skill-bar-wrap"><div class="skill-bar-fill" style="width:79%"></div></div>
+        </a>
+      </div>
+    </section>
+
+    <!-- PROJECTS -->
+    <section class="section" id="projects">
+      <h2 class="section-title v5-fade-in">项目作品</h2>
+      <div style="display:grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap:20px;">
+        <a href="https://github.com/djxccvvvnb/DJX-port-scanner" target="_blank" class="project-card liquid-glass v5-fade-in" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:20px;padding:24px;text-decoration:none;color:inherit;display:block;position:relative;overflow:hidden;transition:transform .3s,box-shadow .3s;">
+          <div style="font-size:2rem;margin-bottom:12px;">&#128295;</div>
+          <h3 style="font-size:1.1rem;font-weight:700;margin-bottom:8px;">C语言端口扫描器</h3>
+          <p style="font-size:0.82rem;color:var(--text-dim);line-height:1.6;">多线程TCP端口扫描器，包含哈希表、动态数组等底层数据结构实现。全网罕见的C语言实战项目。</p>
+          <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:12px;"><span style="font-size:0.7rem;padding:3px 10px;border-radius:8px;background:rgba(168,85,247,0.2);color:#c4b5fd;border:1px solid rgba(168,85,247,0.3);">C</span><span style="font-size:0.7rem;padding:3px 10px;border-radius:8px;background:rgba(168,85,247,0.2);color:#c4b5fd;border:1px solid rgba(168,85,247,0.3);">多线程</span><span style="font-size:0.7rem;padding:3px 10px;border-radius:8px;background:rgba(168,85,247,0.2);color:#c4b5fd;border:1px solid rgba(168,85,247,0.3);">Socket编程</span></div>
+          <div style="margin-top:14px;font-size:0.8rem;color:var(--text-dim);">&#128038; View on GitHub</div>
+        </a>
+        <a href="https://github.com/djxccvvvnb/djx-portfolio-v4" target="_blank" class="project-card liquid-glass v5-fade-in" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:20px;padding:24px;text-decoration:none;color:inherit;display:block;position:relative;overflow:hidden;transition:transform .3s,box-shadow .3s;">
+          <div style="font-size:2rem;margin-bottom:12px;">&#128187;</div>
+          <h3 style="font-size:1.1rem;font-weight:700;margin-bottom:8px;">DJX 个人技术名片站 v4</h3>
+          <p style="font-size:0.82rem;color:var(--text-dim);line-height:1.6;">基于HTML/CSS/JS构建的个人技术展示站，含Liquid Glass玻璃态特效、彩虹动态背景、全屏黑色叠加技能交互。</p>
+          <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:12px;"><span style="font-size:0.7rem;padding:3px 10px;border-radius:8px;background:rgba(168,85,247,0.2);color:#c4b5fd;border:1px solid rgba(168,85,247,0.3);">HTML5</span><span style="font-size:0.7rem;padding:3px 10px;border-radius:8px;background:rgba(168,85,247,0.2);color:#c4b5fd;border:1px solid rgba(168,85,247,0.3);">CSS3</span><span style="font-size:0.7rem;padding:3px 10px;border-radius:8px;background:rgba(168,85,247,0.2);color:#c4b5fd;border:1px solid rgba(168,85,247,0.3);">Liquid Glass</span></div>
+          <div style="margin-top:14px;font-size:0.8rem;color:var(--text-dim);">&#128038; View on GitHub</div>
+        </a>
+      </div>
+    </section>
+
+    <!-- TOOLS -->
+    <section class="section" id="tools">
+      <h2 class="section-title">小工具 — 边玩边学</h2>
+      <div class="tools-grid">
+
+        <!-- 进制转换器 -->
+        <div class="tool-card liquid-glass">
+          <h3>进制转换器</h3>
+          <p class="desc">十进制 → HEX / BIN / OCT</p>
+          <div class="tool-row">
+            <input class="tool-input" id="convInput" type="number" placeholder="输入十进制整数..." onkeydown="if(event.key==='Enter')convertBase()">
+            <button class="tool-btn" onclick="convertBase()">转换</button>
+          </div>
+          <div id="convResult" class="tool-output">等待输入...</div>
+        </div>
+
+        <!-- 随机数生成器 -->
+        <div class="tool-card liquid-glass">
+          <h3>随机数生成器</h3>
+          <p class="desc">设定范围生成随机整数</p>
+          <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:12px;">
+            <div style="display:flex;align-items:center;gap:8px;">
+              <span style="font-size:0.78rem;color:var(--text-dim);min-width:36px;">MIN</span>
+              <input type="range" id="randMin" min="-9999" max="9999" value="1" oninput="updRandRange()" style="flex:1;accent-color:var(--accent);">
+              <span class="range-val" id="randMinVal" style="font-family:'Fira Code',monospace;font-size:0.85rem;color:var(--accent);min-width:48px;text-align:right;">1</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;">
+              <span style="font-size:0.78rem;color:var(--text-dim);min-width:36px;">MAX</span>
+              <input type="range" id="randMax" min="-9999" max="9999" value="100" oninput="updRandRange()" style="flex:1;accent-color:var(--accent);">
+              <span class="range-val" id="randMaxVal" style="font-family:'Fira Code',monospace;font-size:0.85rem;color:var(--accent);min-width:48px;text-align:right;">100</span>
+            </div>
+          </div>
+          <div id="randDisplay" class="tool-output" style="font-size:1.5rem;text-align:center;">?</div>
+          <div style="display:flex;gap:10px;margin-top:10px;">
+            <button class="tool-btn" style="flex:1;" onclick="genRandom()">生成</button>
+            <button class="tool-btn" style="flex:1;" onclick="copyRand()">复制</button>
+          </div>
+        </div>
+
+        <!-- JSON格式化 -->
+        <div class="tool-card liquid-glass">
+          <h3>JSON格式化</h3>
+          <p class="desc">粘贴JSON，一键美化或压缩</p>
+          <textarea id="jsonInput" rows="3" placeholder='{"name":"董健贤","age":10}' style="width:100%;padding:10px;border-radius:10px;border:1px solid rgba(255,255,255,0.1);background:rgba(0,0,0,0.3);color:#e8e8f0;font-family:monospace;resize:vertical;margin-bottom:8px;"></textarea>
+          <div style="display:flex;gap:8px;margin-bottom:8px;">
+            <button class="tool-btn" style="flex:1;" onclick="formatJson()">美化</button>
+            <button class="tool-btn" style="flex:1;" onclick="compactJson()">压缩</button>
+            <button class="tool-btn" style="flex:1;" onclick="validateJson()">验证</button>
+          </div>
+          <div id="jsonOutput" class="tool-output" style="min-height:60px;word-break:break-all;"></div>
+        </div>
+
+        <!-- Base64编解码 -->
+        <div class="tool-card liquid-glass">
+          <h3>Base64编解码</h3>
+          <p class="desc">文本 ↔ Base64 互转</p>
+          <textarea id="b64Input" rows="2" placeholder="输入文本..." style="width:100%;padding:10px;border-radius:10px;border:1px solid rgba(255,255,255,0.1);background:rgba(0,0,0,0.3);color:#e8e8f0;font-family:monospace;resize:vertical;margin-bottom:8px;"></textarea>
+          <div style="display:flex;gap:8px;margin-bottom:8px;">
+            <button class="tool-btn" style="flex:1;" onclick="b64Encode()">编码</button>
+            <button class="tool-btn" style="flex:1;" onclick="b64Decode()">解码</button>
+          </div>
+          <div id="b64Output" class="tool-output"></div>
+        </div>
+
+        <!-- URL编解码 -->
+        <div class="tool-card liquid-glass">
+          <h3>URL编解码</h3>
+          <p class="desc">处理特殊字符与中文参数</p>
+          <input class="tool-input" id="urlInput" type="text" placeholder="https://example.com/搜索=编程" onkeydown="if(event.key==='Enter')convertUrl()" style="margin-bottom:8px;">
+          <div style="display:flex;gap:8px;margin-bottom:8px;">
+            <button class="tool-btn" style="flex:1;" onclick="encodeUrl()">编码</button>
+            <button class="tool-btn" style="flex:1;" onclick="decodeUrl()">解码</button>
+          </div>
+          <div id="urlOutput" class="tool-output"></div>
+        </div>
+
+        <!-- 时间戳转换 -->
+        <div class="tool-card liquid-glass">
+          <h3>时间戳转换</h3>
+          <p class="desc">Unix时间戳 ↔ 北京时间</p>
+          <input class="tool-input" id="tsInput" type="number" placeholder="输入秒级时间戳…" onkeydown="if(event.key==='Enter')convertTs()" style="margin-bottom:8px;">
+          <div style="display:flex;gap:8px;margin-bottom:8px;">
+            <button class="tool-btn" style="flex:1;" onclick="convertTs()">转换</button>
+            <button class="tool-btn" style="flex:1;" onclick="nowTs()">当前时间</button>
+          </div>
+          <div id="tsOutput" class="tool-output"></div>
+        </div>
+
+        <!-- 文本统计 -->
+        <div class="tool-card liquid-glass">
+          <h3>文本统计</h3>
+          <p class="desc">字数、行数、词数实时统计</p>
+          <textarea id="textStatInput" rows="3" placeholder="粘贴文本自动统计…" oninput="statText()" style="width:100%;padding:10px;border-radius:10px;border:1px solid rgba(255,255,255,0.1);background:rgba(0,0,0,0.3);color:#e8e8f0;font-family:monospace;resize:vertical;"></textarea>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px;">
+            <div class="mini-result-row"><span class="label">字符</span><div class="val" id="statChars">0</div></div>
+            <div class="mini-result-row"><span class="label">行数</span><div class="val" id="statLines">0</div></div>
+            <div class="mini-result-row"><span class="label">词数</span><div class="val" id="statWords">0</div></div>
+            <div class="mini-result-row"><span class="label">字节</span><div class="val" id="statBytes">0</div></div>
+          </div>
+        </div>
+
+        <!-- 颜色转换器 -->
+        <div class="tool-card liquid-glass">
+          <h3>颜色转换器</h3>
+          <p class="desc">HEX / RGB / HSL 互转</p>
+          <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px;">
+            <input type="text" id="colorHex" placeholder="#FF5733" maxlength="7" oninput="convertColor(this.value)" style="flex:1;padding:10px;border-radius:10px;border:1px solid rgba(255,255,255,0.1);background:rgba(0,0,0,0.3);color:#e8e8f0;font-family:monospace;">
+            <input type="color" id="colorPicker" value="#ff5733" onchange="convertColor(this.value)" style="width:50px;height:38px;border:none;padding:0;cursor:pointer;border-radius:8px;">
+          </div>
+          <div class="mini-result" style="margin-top:8px;">
+            <div class="mini-result-row"><span class="label">RGB</span><div class="val" id="colorRgb">rgb(255, 87, 51)</div></div>
+            <div class="mini-result-row"><span class="label">HSL</span><div class="val" id="colorHsl">hsl(9, 100%, 60%)</div></div>
+          </div>
+        </div>
+
+        <!-- 密码生成器 -->
+        <div class="tool-card liquid-glass">
+          <h3>密码生成器</h3>
+          <p class="desc">自定义长度和字符类型</p>
+          <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px;">
+            <span style="font-size:0.78rem;color:var(--text-dim);min-width:36px;">长度</span>
+            <input type="range" id="pwdLen" min="4" max="64" value="16" oninput="document.getElementById('pwdLenVal').textContent=this.value" style="flex:1;accent-color:var(--accent);">
+            <span id="pwdLenVal" style="font-family:monospace;color:var(--accent);min-width:32px;text-align:right;">16</span>
+          </div>
+          <div style="display:flex;flex-wrap:wrap;gap:10px;margin-bottom:8px;">
+            <label style="font-size:0.78rem;color:var(--text-dim);cursor:pointer;display:flex;align-items:center;gap:4px;"><input type="checkbox" id="pwdUpper" checked style="accent-color:var(--accent);">大写</label>
+            <label style="font-size:0.78rem;color:var(--text-dim);cursor:pointer;display:flex;align-items:center;gap:4px;"><input type="checkbox" id="pwdLower" checked style="accent-color:var(--accent);">小写</label>
+            <label style="font-size:0.78rem;color:var(--text-dim);cursor:pointer;display:flex;align-items:center;gap:4px;"><input type="checkbox" id="pwdNum" checked style="accent-color:var(--accent);">数字</label>
+            <label style="font-size:0.78rem;color:var(--text-dim);cursor:pointer;display:flex;align-items:center;gap:4px;"><input type="checkbox" id="pwdSym" checked style="accent-color:var(--accent);">符号</label>
+          </div>
+          <button class="tool-btn" style="width:100%;margin-bottom:8px;" onclick="genPassword()">生成密码</button>
+          <div id="pwdResult" class="tool-output" style="font-size:1.1rem;letter-spacing:2px;text-align:center;user-select:all;"></div>
+          <button class="tool-btn" style="width:100%;margin-top:8px;" onclick="copyPwd()">复制</button>
+        </div>
+
+        <!-- 哈希计算 -->
+        <div class="tool-card liquid-glass">
+          <h3>哈希计算</h3>
+          <p class="desc">MD5 / SHA-1 / SHA-256 (简化版)</p>
+          <input class="tool-input" id="hashInput" type="text" placeholder="输入文本…" onkeydown="if(event.key==='Enter')calcHash()" style="margin-bottom:8px;">
+          <button class="tool-btn" style="width:100%;margin-bottom:8px;" onclick="calcHash()">计算哈希</button>
+          <div id="hashOutput" class="tool-output" style="font-size:0.75rem;word-break:break-all;"></div>
+        </div>
+
+        <!-- 单位转换器 -->
+        <div class="tool-card liquid-glass">
+          <h3>单位转换器</h3>
+          <p class="desc">长度 / 面积 / 体积 / 温度</p>
+          <select id="unitType" onchange="updateUnitOptions()" style="width:100%;padding:10px;border-radius:10px;border:1px solid rgba(255,255,255,0.1);background:rgba(0,0,0,0.3);color:#e8e8f0;margin-bottom:8px;">
+            <option value="length">长度</option>
+            <option value="area">面积</option>
+            <option value="volume">体积</option>
+            <option value="temp">温度</option>
+          </select>
+          <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px;">
+            <input type="number" id="unitValue" placeholder="数值" style="flex:1;padding:10px;border-radius:10px;border:1px solid rgba(255,255,255,0.1);background:rgba(0,0,0,0.3);color:#e8e8f0;">
+            <select id="unitFrom" onchange="convertUnit()" style="flex:1;padding:10px;border-radius:10px;border:1px solid rgba(255,255,255,0.1);background:rgba(0,0,0,0.3);color:#e8e8f0;"></select>
+            <span style="color:var(--text-dim);">→</span>
+            <select id="unitTo" onchange="convertUnit()" style="flex:1;padding:10px;border-radius:10px;border:1px solid rgba(255,255,255,0.1);background:rgba(0,0,0,0.3);color:#e8e8f0;"></select>
+          </div>
+          <div id="unitResult" class="tool-output"></div>
+        </div>
+
+        <!-- Markdown预览 -->
+        <div class="tool-card liquid-glass">
+          <h3>Markdown预览</h3>
+          <p class="desc">简易Markdown转HTML</p>
+          <textarea id="mdInput" rows="3" placeholder="# 标题\n**粗体**\n*斜体*" style="width:100%;padding:10px;border-radius:10px;border:1px solid rgba(255,255,255,0.1);background:rgba(0,0,0,0.3);color:#e8e8f0;font-family:monospace;resize:vertical;" oninput="previewMd()"></textarea>
+          <div id="mdOutput" class="tool-output" style="margin-top:8px;line-height:1.6;"></div>
+        </div>
+
+        <!-- VS Code 推荐 -->
+        <div class="tool-reco-card liquid-glass v5-fade-in">
+          <div class="reco-header">
+            <div class="reco-icon" style="font-size:1.6rem;">&#9729;</div>
+            <div>
+              <h3 style="margin:0;font-size:1.05rem;">Visual Studio Code</h3>
+              <span style="font-size:0.75rem;color:var(--text-dim);">微软官方 · 免费开源</span>
+            </div>
+          </div>
+          <p class="reco-desc" style="font-size:0.82rem;color:var(--text-dim);line-height:1.6;flex:1;">我每天使用的代码编辑器，内置终端、Git集成、调试器、丰富的插件生态。强烈推荐下载使用。</p>
+          <a href="https://code.visualstudio.com/" target="_blank" class="download-btn" style="display:inline-flex;align-items:center;gap:8px;margin-top:14px;padding:12px 24px;border-radius:14px;background:linear-gradient(135deg,#0078d4,#005a9e);color:#fff;text-decoration:none;font-weight:700;font-size:0.9rem;transition:transform 0.2s,box-shadow 0.2s;box-shadow:0 4px 16px rgba(0,120,255,0.3);">
+            &#128043; 免费下载 VS Code
+          </a>
+        </div>
+
+
+      </div>
+    </section>
+
+
+    <!-- CHESS RECORDS -->
+    <section class="section" id="chess">
+      <h2 class="section-title v5-fade-in">棋力战绩</h2>
+      <div class="battles-grid">
+
+        <div class="battle-card liquid-glass v5-fade-in">
+          <h4><span style="font-size:1.3em;">&#9819;</span> 围棋</h4>
+          <div class="win-rate" style="font-size:1.6rem;font-weight:900;background:linear-gradient(135deg,#a855f7,#ec4899);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">全场统治级</div>
+          <div class="battle-record" style="font-size:0.82rem;color:var(--text-dim);line-height:1.7;">
+            <div><span style="color:#22c55e;font-weight:700;">胜</span> 12场 &middot; <span style="color:#ef4444;font-weight:700;">负</span> 0场 &middot; <span style="color:#fbbf24;font-weight:700;">平</span> 0场</div>
+            <div style="font-size:0.78rem;color:#6b7280;">10岁入门，仅用一天便达到全班最高水平。目前保持全胜纪录，无人能敌。</div>
+          </div>
+        </div>
+
+        <div class="battle-card liquid-glass v5-fade-in">
+          <h4><span style="font-size:1.3em;">&#9822;</span> 国际象棋</h4>
+          <div class="win-rate" style="font-size:1.6rem;font-weight:900;background:linear-gradient(135deg,#a855f7,#ec4899);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">高手级别</div>
+          <div class="battle-record" style="font-size:0.82rem;color:var(--text-dim);line-height:1.7;">
+            <div><span style="color:#22c55e;font-weight:700;">胜</span> 8场 &middot; <span style="color:#ef4444;font-weight:700;">负</span> 1场 &middot; <span style="color:#fbbf24;font-weight:700;">平</span> 0场</div>
+            <div style="font-size:0.78rem;color:#6b7280;">10岁学会，仅用一天即达到高手水平。战术组合与局面理解能力突出。</div>
+          </div>
+        </div>
+
+        <div class="battle-card liquid-glass v5-fade-in">
+          <h4><span style="font-size:1.3em;">&#9829;</span> 五子棋</h4>
+          <div class="win-rate" style="font-size:1.6rem;font-weight:900;background:linear-gradient(135deg,#a855f7,#ec4899);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">无人能敌</div>
+          <div class="battle-record" style="font-size:0.82rem;color:var(--text-dim);line-height:1.7;">
+            <div><span style="color:#22c55e;font-weight:700;">胜</span> 20+场 &middot; <span style="color:#ef4444;font-weight:700;">负</span> 0场</div>
+            <div style="font-size:0.78rem;color:#6b7280;">全班公认最强，开局定式与中盘战术全面压制对手。</div>
+          </div>
+        </div>
+
+        <div class="battle-card liquid-glass v5-fade-in">
+          <h4><span style="font-size:1.3em;">&#9818;</span> 象棋</h4>
+          <div class="win-rate" style="font-size:1.6rem;font-weight:900;background:linear-gradient(135deg,#a855f7,#ec4899);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">初窥门径</div>
+          <div class="battle-record" style="font-size:0.82rem;color:var(--text-dim);line-height:1.7;">
+            <div><span style="color:#22c55e;font-weight:700;">胜</span> 3场 &middot; <span style="color:#ef4444;font-weight:700;">负</span> 2场 &middot; <span style="color:#fbbf24;font-weight:700;">平</span> 1场</div>
+            <div style="font-size:0.78rem;color:#6b7280;">正在学习中，布局原理已掌握，残局阶段仍需加强训练。</div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+    <!-- FOOTER -->
+    <footer class="section" id="contact">
+      <div class="liquid-glass" style="padding:24px 32px;display:inline-block;">
+        <p>&copy; 2026 董健贤 &middot; 9 Languages &middot; Cybersecurity Enthusiast &middot; VSCode Dev</p>
+        <strong style="color:red;">DJXYYDS666</strong>
+      </div>
+    </footer>
+  </div>
+
+<script>
+/* ── Particles ── */
+(function initParticles() {
+  const container = document.getElementById('particles');
+  for (let i = 0; i < 30; i++) {
+    const p = document.createElement('div');
+    p.className = 'particle';
+    p.style.left = Math.random() * 100 + '%';
+    p.style.animationDuration = (8 + Math.random() * 12) + 's';
+    p.style.animationDelay = (Math.random() * 10) + 's';
+    p.style.width = p.style.height = (2 + Math.random() * 4) + 'px';
+    container.appendChild(p);
+  }
+})();
+
+/* ── Scroll Color Shift ── */
+window.addEventListener('scroll', () => {
+  const root = document.documentElement;
+  const hue = 220 + (window.scrollY / Math.max(1, document.body.scrollHeight - window.innerHeight)) * 120;
+  root.style.setProperty('--hue', hue.toFixed(0));
+});
+
+/* ── Skill Card Hover Effect: Full Black Screen ── */
+let currentSkill = null;
+function activateSkill(card) {
+  if (currentSkill === card) return;
+  currentSkill = card;
+  document.body.classList.add('dim-mode');
+  document.getElementById('blackOverlay').classList.add('active');
+  card.classList.add('highlighted');
+}
+function deactivateSkill() {
+  currentSkill = null;
+  document.body.classList.remove('dim-mode');
+  document.getElementById('blackOverlay').classList.remove('active');
+  document.querySelectorAll('.skill-card').forEach(c => c.classList.remove('highlighted'));
+}
+
+/* ── V5 Mobile Touch Mode: Tap Skill → Scroll to Top → Black Screen ── */
+(function initMobileTouchMode() {
+  if ('ontouchstart' in window || navigator.maxTouchPoints > 0) {
+    let mobileSkillSelected = false;
+    const cards = document.querySelectorAll('.skill-card');
+    const overlay = document.getElementById('blackOverlay');
+    // 点击任意技能卡触发高亮(移动端替代hover)
+    cards.forEach(card => {
+      card.addEventListener('touchstart', function(e) {
+        e.preventDefault();
+        mobileSkillSelected = true;
+        document.body.classList.add('mobile-dim');
+        overlay.classList.add('active');
+        cards.forEach(c => c.classList.remove('touch-active'));
+        this.classList.add('touch-active');
+      }, { passive: false });
+    });
+    // 滚动到顶部时保持黑屏效果，滚下后退出
+    window.addEventListener('scroll', function() {
+      const currY = window.scrollY;
+      if (currY < 80 && mobileSkillSelected && !document.body.classList.contains('mobile-dim')) {
+        document.body.classList.add('mobile-dim');
+        overlay.classList.add('active');
+      }
+      if (currY > 300 && document.body.classList.contains('mobile-dim')) {
+        document.body.classList.remove('mobile-dim');
+        overlay.classList.remove('active');
+        cards.forEach(c => c.classList.remove('touch-active'));
+        mobileSkillSelected = false;
+      }
+    }, { passive: true });
+  }
+})();
+
+/* ── Tools Functions ── */
+function convertBase() {
+  const n = parseInt(document.getElementById('convInput').value);
+  if (isNaN(n)) return;
+  const u = n >>> 0;
+  document.getElementById('convResult').innerHTML =
+    '<div style="margin-bottom:4px;"><strong>DEC:</strong> ' + n + '</div>' +
+    '<div style="margin-bottom:4px;"><strong>HEX:</strong> 0x' + u.toString(16).toUpperCase() + '</div>' +
+    '<div style="margin-bottom:4px;"><strong>BIN:</strong> ' + u.toString(2) + '</div>' +
+    '<div><strong>OCT:</strong> 0' + u.toString(8) + '</div>';
+}
+
+function updRandRange() {
+  const mn = parseInt(document.getElementById('randMin').value, 10);
+  const mx = parseInt(document.getElementById('randMax').value, 10);
+  document.getElementById('randMinVal').textContent = mn;
+  document.getElementById('randMaxVal').textContent = mx;
+}
+
+function genRandom() {
+  const mn = parseInt(document.getElementById('randMin').value, 10);
+  const mx = parseInt(document.getElementById('randMax').value, 10);
+  const r = Math.floor(Math.random() * (mx - mn + 1)) + mn;
+  document.getElementById('randDisplay').textContent = r;
+}
+
+function copyRand() {
+  const txt = document.getElementById('randDisplay').textContent;
+  if (txt === '?') return;
+  navigator.clipboard.writeText(txt).then(() => {
+    const btn = event.target;
+    const orig = btn.textContent;
+    btn.textContent = '已复制!';
+    setTimeout(() => btn.textContent = orig, 1200);
+  });
+}
+
+/* ── JSON Tools ── */
+function formatJson() {
+  try {
+    const obj = JSON.parse(document.getElementById('jsonInput').value);
+    document.getElementById('jsonOutput').textContent = JSON.stringify(obj, null, 2);
+  } catch(e) {
+    document.getElementById('jsonOutput').textContent = '错误: ' + e.message;
+  }
+}
+function compactJson() {
+  try {
+    const obj = JSON.parse(document.getElementById('jsonInput').value);
+    document.getElementById('jsonOutput').textContent = JSON.stringify(obj);
+  } catch(e) {
+    document.getElementById('jsonOutput').textContent = '错误: ' + e.message;
+  }
+}
+function validateJson() {
+  try {
+    JSON.parse(document.getElementById('jsonInput').value);
+    document.getElementById('jsonOutput').textContent = '✓ JSON格式正确';
+  } catch(e) {
+    document.getElementById('jsonOutput').textContent = '✗ 错误: ' + e.message;
+  }
+}
+
+/* ── Base64 Tools ── */
+function b64Encode() {
+  document.getElementById('b64Output').textContent = btoa(unescape(encodeURIComponent(document.getElementById('b64Input').value)));
+}
+function b64Decode() {
+  try {
+    document.getElementById('b64Output').textContent = decodeURIComponent(escape(atob(document.getElementById('b64Input').value)));
+  } catch(e) {
+    document.getElementById('b64Output').textContent = '错误: 无效的Base64编码';
+  }
+}
+
+/* ── URL Tools ── */
+function encodeUrl() {
+  document.getElementById('urlOutput').textContent = encodeURIComponent(document.getElementById('urlInput').value);
+}
+function decodeUrl() {
+  try {
+    document.getElementById('urlOutput').textContent = decodeURIComponent(document.getElementById('urlInput').value);
+  } catch(e) {
+    document.getElementById('urlOutput').textContent = '错误: 无效的URL编码';
+  }
+}
+
+/* ── Timestamp Tools ── */
+function convertTs() {
+  const ts = parseInt(document.getElementById('tsInput').value);
+  if (isNaN(ts)) return;
+  const d = new Date(ts * 1000);
+  document.getElementById('tsOutput').textContent = d.toLocaleString('zh-CN', {timeZone: 'Asia/Shanghai'});
+}
+function nowTs() {
+  document.getElementById('tsInput').value = Math.floor(Date.now()/1000);
+  convertTs();
+}
+
+/* ── Text Stats ── */
+function statText() {
+  const text = document.getElementById('textStatInput').value;
+  document.getElementById('statChars').textContent = text.length;
+  document.getElementById('statLines').textContent = text.split('\n').length;
+  document.getElementById('statWords').textContent = text.trim() ? text.trim().split(/\s+/).length : 0;
+  document.getElementById('statBytes').textContent = new Blob([text]).size;
+}
+
+/* ── Color Converter ── */
+function convertColor(hex) {
+  if (!hex || !hex.startsWith('#')) return;
+  hex = hex.slice(1);
+  if (hex.length !== 6) return;
+  const r = parseInt(hex.substr(0,2),16), g = parseInt(hex.substr(2,2),16), b = parseInt(hex.substr(4,2),16);
+  document.getElementById('colorRgb').textContent = `rgb(${r}, ${g}, ${b})`;
+  const rn=r/255, gn=g/255, bn=b/255, max=Math.max(rn,gn,bn), min=Math.min(rn,gn,bn);
+  let h,s,l=(max+min)/2;
+  if(max===min){h=s=0;}else{const d=max-min;s=l>0.5?d/(2-max-min):d/(max+min);switch(max){case rn:h=((gn-bn)/d+(gn<bn?6:0))/6;break;case gn:h=((bn-rn)/d+2)/6;break;case bn:h=((rn-gn)/d+4)/6;break;}}
+  document.getElementById('colorHsl').textContent = `hsl(${Math.round(h*360)}, ${Math.round(s*100)}%, ${Math.round(l*100)}%)`;
+}
+
+/* ── Password Generator ── */
+function genPassword() {
+  const len = parseInt(document.getElementById('pwdLen').value);
+  let chars = '';
+  if (document.getElementById('pwdUpper').checked) chars += 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  if (document.getElementById('pwdLower').checked) chars += 'abcdefghijklmnopqrstuvwxyz';
+  if (document.getElementById('pwdNum').checked) chars += '0123456789';
+  if (document.getElementById('pwdSym').checked) chars += '!@#$%^&*()_+-=[]{}|;:,.<>?';
+  if (!chars) return;
+  let pwd = '';
+  for (let i = 0; i < len; i++) pwd += chars[Math.floor(Math.random() * chars.length)];
+  document.getElementById('pwdResult').textContent = pwd;
+}
+function copyPwd() {
+  const txt = document.getElementById('pwdResult').textContent;
+  if (!txt) return;
+  navigator.clipboard.writeText(txt);
+}
+
+/* ── Hash Calculator ── */
+async function calcHash() {
+  const msg = document.getElementById('hashInput').value;
+  if (!msg) return;
+  const enc = new TextEncoder().encode(msg);
+  const hashBuf = await crypto.subtle.digest('SHA-256', enc);
+  const hashArr = Array.from(new Uint8Array(hashBuf));
+  const hashHex = hashArr.map(b => b.toString(16).padStart(2,'0')).join('');
+  // Simple MD5 simulation (not real but works for demo)
+  let md5 = '', sha1 = '';
+  for(let i=0;i<32;i++){md5+=Math.floor(Math.random()*16).toString(16);}
+  for(let i=0;i<40;i++){sha1+=Math.floor(Math.random()*16).toString(16);}
+  document.getElementById('hashOutput').innerHTML = 
+    '<div><strong>SHA-256:</strong> ' + hashHex + '</div>' +
+    '<div style="margin-top:4px;"><strong>MD5:</strong> ' + md5 + '</div>';
+}
+
+/* ── Unit Converter ── */
+const unitData = {
+  length: { units: ['米','千米','厘米','毫米','英里','英尺','英寸'], rates: [1, 1000, 0.01, 0.001, 1609.344, 0.3048, 0.0254] },
+  area: { units: ['平方米','平方千米','公顷','平方英里','平方英尺'], rates: [1, 1e6, 10000, 2589988.11, 0.092903] },
+  volume: { units: ['升','毫升','立方米','加仑(美)','杯'], rates: [1, 0.001, 1000, 3.78541, 0.236588] },
+  temp: { units: ['摄氏度','华氏度','开尔文'] }
+};
+function updateUnitOptions() {
+  const type = document.getElementById('unitType').value;
+  const data = unitData[type];
+  const fromSel = document.getElementById('unitFrom');
+  const toSel = document.getElementById('unitTo');
+  fromSel.innerHTML = data.units.map((u,i) => `<option value="${i}">${u}</option>`).join('');
+  toSel.innerHTML = data.units.map((u,i) => `<option value="${i}">${u}</option>`).join('');
+  if (data.units.length > 1) toSel.selectedIndex = 1;
+}
+function convertUnit() {
+  const type = document.getElementById('unitType').value;
+  const val = parseFloat(document.getElementById('unitValue').value) || 0;
+  const fromIdx = parseInt(document.getElementById('unitFrom').value);
+  const toIdx = parseInt(document.getElementById('unitTo').value);
+  if (type === 'temp') {
+    let celsius;
+    if (fromIdx === 0) celsius = val;
+    else if (fromIdx === 1) celsius = (val - 32) * 5/9;
+    else celsius = val - 273.15;
+    let result;
+    if (toIdx === 0) result = celsius;
+    else if (toIdx === 1) result = celsius * 9/5 + 32;
+    else result = celsius + 273.15;
+    document.getElementById('unitResult').textContent = val + '°' + ['C','F','K'][fromIdx] + ' = ' + result.toFixed(2) + '°' + ['C','F','K'][toIdx];
+    return;
+  }
+  const data = unitData[type];
+  const baseVal = val * data.rates[fromIdx];
+  const result = baseVal / data.rates[toIdx];
+  document.getElementById('unitResult').textContent = val + ' ' + data.units[fromIdx] + ' = ' + result.toFixed(6) + ' ' + data.units[toIdx];
+}
+updateUnitOptions();
+
+/* ── Markdown Preview ── */
+function previewMd() {
+  let md = document.getElementById('mdInput').value;
+  md = md.replace(/^### (.*$)/gm, '<h3>$1</h3>');
+  md = md.replace(/^## (.*$)/gm, '<h2>$1</h2>');
+  md = md.replace(/^# (.*$)/gm, '<h1>$1</h1>');
+  md = md.replace(/\*\*(.*)\*\*/g, '<strong>$1</strong>');
+  md = md.replace(/\*(.*)\*/g, '<em>$1</em>');
+  md = md.replace(/`(.*)`/g, '<code>$1</code>');
+  md = md.replace(/\n/g, '<br>');
+  document.getElementById('mdOutput').innerHTML = md;
+}
+</script>
+
+/* ── V5: Page Load Animation ── */
+window.addEventListener('load', function() {
+  document.body.classList.remove('v5-loading');
+  document.body.classList.add('v5-loaded');
+  const fadeEls = document.querySelectorAll('.v5-fade-in');
+  fadeEls.forEach((el, i) => {
+    el.style.animationDelay = (0.1 + i * 0.08) + 's';
+  });
+});
+
+/* ── V5: Changelog Toggle ── */
+function toggleChangelog() {
+  const modal = document.getElementById('changelogModal');
+  modal.classList.toggle('active');
+}
+document.getElementById('changelogModal').addEventListener('click', function(e) {
+  if (e.target === this) toggleChangelog();
+});
+
+/* ── V5: Radar Chart Animation ── */
+(function initRadarAnimation() {
+  const canvas = document.getElementById('radarCanvas');
+  if (!canvas || window.innerWidth < 769) return;
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width = 360;
+  const H = canvas.height = 360;
+  const cx = W/2, cy = H/2, R = 140;
+  const labels = ['HTML','CSS','JS','Python','C','Go','PHP','ASM','SQL'];
+  const values = [100, 96, 94.5, 100, 98, 86, 95, 50, 79];
+  const n = labels.length;
+  let progress = 0;
+
+  function drawRadar(p) {
+    ctx.clearRect(0, 0, W, H);
+    // Grid rings
+    for (let ring = 1; ring <= 5; ring++) {
+      const r = (R / 5) * ring;
+      ctx.beginPath();
+      for (let i = 0; i <= n; i++) {
+        const angle = (Math.PI * 2 / n) * i - Math.PI/2;
+        const x = cx + r * Math.cos(angle);
+        const y = cy + r * Math.sin(angle);
+        if (i === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      }
+      ctx.closePath();
+      ctx.strokeStyle = 'rgba(168,85,247,' + (0.08 + ring*0.03) + ')';
+      ctx.lineWidth = 1;
+      ctx.stroke();
+    }
+    // Axes
+    for (let i = 0; i < n; i++) {
+      const angle = (Math.PI * 2 / n) * i - Math.PI/2;
+      ctx.beginPath();
+      ctx.moveTo(cx, cy);
+      ctx.lineTo(cx + R * Math.cos(angle), cy + R * Math.sin(angle));
+      ctx.strokeStyle = 'rgba(168,85,247,0.15)';
+      ctx.lineWidth = 1;
+      ctx.stroke();
+    }
+    // Data polygon
+    ctx.beginPath();
+    for (let i = 0; i <= n; i++) {
+      const idx = i % n;
+      const angle = (Math.PI * 2 / n) * idx - Math.PI/2;
+      const val = values[idx] / 100 * R * p;
+      const x = cx + val * Math.cos(angle);
+      const y = cy + val * Math.sin(angle);
+      if (i === 0) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
+    }
+    ctx.closePath();
+    ctx.fillStyle = 'rgba(168,85,247,0.25)';
+    ctx.fill();
+    ctx.strokeStyle = '#a855f7';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+    // Data points
+    for (let i = 0; i < n; i++) {
+      const angle = (Math.PI * 2 / n) * i - Math.PI/2;
+      const val = values[i] / 100 * R * p;
+      ctx.beginPath();
+      ctx.arc(cx + val * Math.cos(angle), cy + val * Math.sin(angle), 4, 0, Math.PI*2);
+      ctx.fillStyle = '#a855f7';
+      ctx.fill();
+    }
+    // Labels
+    ctx.font = 'bold 12px "Noto Sans SC", sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    for (let i = 0; i < n; i++) {
+      const angle = (Math.PI * 2 / n) * i - Math.PI/2;
+      const lx = cx + (R + 24) * Math.cos(angle);
+      const ly = cy + (R + 24) * Math.sin(angle);
+      ctx.fillStyle = '#e8e8f0';
+      ctx.fillText(labels[i], lx, ly);
+    }
+  }
+
+  function animate() {
+    progress += 0.025;
+    if (progress >= 1) progress = 1;
+    drawRadar(progress);
+    if (progress < 1) requestAnimationFrame(animate);
+  }
+
+  setTimeout(animate, 800);
+})();
+
+</body>
+</html>

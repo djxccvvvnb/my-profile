@@ -1,0 +1,77 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DJX.dev — Code Showcase</title>
+  <link rel='preconnect' href='https://fonts.googleapis.com'>
+  <link href='https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Noto+Sans+SC:wght@400;700;900&display=swap' rel='stylesheet'>
+  <style>
+    :root { --hue: 220; --accent: hsl(var(--hue), 100%, 65%); --bg-dark: #0a0a0f; --text: #e8e8f0; --text-dim: #8888aa; --code-bg: #1e1e2e; --code-fg: #cdd6f4; }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: linear-gradient(-45deg, #0d0d14, #1a1a2e, #16213e, #0f3460, #1a1a2e); background-size: 400% 400%; animation: gradientShift 6s ease infinite; color: var(--text); font-family: 'Noto Sans SC', system-ui, sans-serif; min-height: 100vh; overflow-x: hidden; }
+    @keyframes gradientShift { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+    .liquid-glass { position: relative; background: rgba(255,255,255,0.02); backdrop-filter: blur(12px) saturate(1.3) contrast(1.02); -webkit-backdrop-filter: blur(12px) saturate(1.3) contrast(1.02); border-radius: 32px; border: 1px solid rgba(255,255,255,0.25); box-shadow: inset 0 1px 0 rgba(255,255,255,0.7), inset 0 -1px 0 rgba(255,255,255,0.1), 0 8px 32px rgba(0,0,0,0.12); overflow: hidden; }
+    .liquid-glass::before { content: ''; position: absolute; inset: -20%; background: radial-gradient(ellipse 148.5% 148.5% at 50% 50%, rgba(88,135,156,0) 0%, transparent 70%); filter: blur(10.4px); animation: liquidRefract 8s ease-in-out infinite; }
+    @keyframes liquidRefract { 0%,100%{transform:rotate(0deg) scale(1);} 50%{transform:rotate(174.6deg) scale(1.26);} }
+    nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; padding: 12px 32px; display: flex; align-items: center; justify-content: space-between; background: rgba(10,10,15,0.7); backdrop-filter: blur(16px); border-bottom: 1px solid rgba(255,255,255,0.06); border-radius: 0 0 20px 20px; }
+    nav .logo { font-weight: 900; font-size: 1.1rem; letter-spacing: 2px; }
+    nav .logo span { color: var(--accent); }
+    nav ul { list-style: none; display: flex; gap: 24px; }
+    nav ul li a { color: var(--text-dim); text-decoration: none; font-size: 0.85rem; transition: color 0.2s; }
+    nav ul li a:hover { color: var(--accent); }
+    .container { position: relative; z-index: 1; max-width: 960px; margin: 0 auto; padding: 80px 24px 40px; }
+    .back-btn { display: inline-flex; align-items: center; gap: 8px; padding: 10px 20px; border-radius: 12px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: var(--text-dim); text-decoration: none; font-size: 0.9rem; transition: all 0.2s; margin-bottom: 24px; }
+    .back-btn:hover { background: var(--accent); color: #fff; border-color: var(--accent); }
+    .code-header { display: flex; align-items: center; gap: 16px; margin-bottom: 20px; }
+    .code-header img { width: 48px; height: 48px; border-radius: 12px; object-fit: contain; }
+    .code-header h1 { font-size: 1.5rem; font-weight: 700; }
+    .code-header p { font-size: 0.9rem; color: var(--text-dim); margin-top: 4px; }
+    .code-window { background: var(--code-bg); font-family: 'Consolas', 'Courier New', monospace; font-size: 13px; line-height: 1.75; color: var(--code-fg); padding: 24px; white-space: pre; overflow-x: auto; border-radius: 16px; border: 1px solid rgba(255,255,255,0.08); }
+  </style>
+</head>
+<body>
+  <nav class="liquid-glass">
+    <div class="logo"><a href="main.html" style="color:inherit;text-decoration:none;">DJX<span>.dev</span></a></div>
+    <ul>
+      <li><a href="main.html#skills">技术栈</a></li>
+      <li><a href="main.html#about">关于</a></li>
+    </ul>
+  </nav>
+  <div class="container">
+    <a href="main.html" class="back-btn liquid-glass">&#8592; 返回首页</a>
+    <div class="code-header">
+      <img src="html.jpg" alt="HTML">
+      <div>
+        <h1>HTML5 &mdash; 语义化页面架构</h1>
+        <p>Structure &middot; Semantic &middot; SEO</p>
+      </div>
+    </div>
+    <div class="code-window">&lt;!DOCTYPE html&gt;
+&lt;html lang="zh-CN"&gt;
+&lt;head&gt;
+  &lt;meta charset="UTF-8" /&gt;
+  &lt;title&gt;董健贤 Portfolio&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;header&gt;
+    &lt;nav aria-label="主导航"&gt;
+      &lt;a href="/"&gt;DJX.dev&lt;/a&gt;
+      &lt;ul&gt;
+        &lt;li&gt;&lt;a href="#about"&gt;关于&lt;/a&gt;&lt;/li&gt;
+        &lt;li&gt;&lt;a href="#skills"&gt;技能&lt;/a&gt;&lt;/li&gt;
+      &lt;/ul&gt;
+    &lt;/nav&gt;
+  &lt;/header&gt;
+  &lt;main&gt;
+    &lt;section id="hero"&gt;
+      &lt;h1&gt;董健贤&lt;/h1&gt;
+      &lt;p&gt;10岁 · 9门语言 · 网络安全探索者&lt;/p&gt;
+    &lt;/section&gt;
+  &lt;/main&gt;
+  &lt;footer&gt;&amp;copy; 2026 Dong Jianxian&lt;/footer&gt;
+&lt;/body&gt;
+&lt;/html&gt;</div>
+  </div>
+</body>
+</html>
